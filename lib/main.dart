@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:math';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(DogAdoptionApp());
@@ -15,10 +17,10 @@ class DogAdoptionApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',  // Set SplashScreen as the initial route
+      initialRoute: '/',
       routes: {
-        '/': (context) => SplashScreen(),  // SplashScreen route
-        '/home': (context) => HomePage(),  // HomePage route
+        '/': (context) => SplashScreen(),
+        '/home': (context) => HomePage(),
       },
     );
   }
@@ -101,8 +103,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final List<String> breeds = [
     'labrador',
-    'goldenretriever',
-    'germanshepherd',
+    'pomeranian',
+    'pug',
     'bulldog',
     'beagle',
     'poodle',
@@ -207,28 +209,52 @@ class _HomePageState extends State<HomePage> {
 class BreedPage extends StatelessWidget {
   final String breed;
 
-  // List of dogs with breed and names
-  final List<Map<String, String>> dogs = [
-    {'name': 'Buddy', 'image': 'https://dog.ceo/api/breed/labrador/images/random'},
-    {'name': 'Max', 'image': 'https://dog.ceo/api/breed/labrador/images/random'},
-    {'name': 'Bella', 'image': 'https://dog.ceo/api/breed/labrador/images/random'},
-    {'name': 'Charlie', 'image': 'https://dog.ceo/api/breed/labrador/images/random'},
+  BreedPage({required this.breed});
+
+  // List of potential dog names
+  final List<String> dogNames = [
+    'Buddy', 'Fido', 'Fluffy', 'Lassie', 'Lucky', 'Rex', 'Rover', 'Spot',
+    'Duke', 'Elizabeth', 'King', 'Kate', 'Princess',
+    'Annie', 'Bella', 'Emily', 'Emma', 'Maggie', 'Molly', 'Sophie',
+    'Barney', 'Charlie', 'Dexter', 'Jack', 'Jake', 'Max', 'Oscar',
+    'Daisy', 'Lily', 'Rose', 'Tulip', 'Violet',
+    'Cooper', 'Ferrari', 'Jazz', 'Kia', 'Ranger',
+    'Chef', 'Cocoa', 'Cookie', 'Olive', 'Peanut', 'Pork Chop', 'Pumpkin', 'Sugar', 'Sushi',
+    'Comet', 'Cosmo', 'Luna', 'Pluto', 'Star', 'Stella', 'Venus'
   ];
 
-  BreedPage({required this.breed});
+  // Method to generate a random name from the list
+  String getRandomName() {
+    final random = Random();
+    return dogNames[random.nextInt(dogNames.length)];
+  }
+
+  // Dynamically generate dogs list with random names
+  List<Map<String, String>> getDogsForBreed(String breed) {
+    return List.generate(4, (index) {
+      return {
+        'name': getRandomName(), // Assign a random name
+        'image': 'https://dog.ceo/api/breed/$breed/images/random',
+      };
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Fetch dogs for the selected breed
+    final List<Map<String, String>> dogs = getDogsForBreed(breed);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('$breed Details'),
+        title: Text(breed.toUpperCase(),
+        ),
       ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              'Here are some dogs of the $breed breed:',
+              'Available $breed for adoption:',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
@@ -251,7 +277,8 @@ class BreedPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DogDetailPage(dogName: dog['name']!, breed: breed),
+                        builder: (context) =>
+                            DogDetailPage(dogName: dog['name']!, breed: breed),
                       ),
                     );
                   },
@@ -267,7 +294,8 @@ class BreedPage extends StatelessWidget {
                         FutureBuilder<String>(
                           future: _fetchDogImage(dogImageUrl),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator());
                             }
                             if (snapshot.hasError) {
@@ -315,7 +343,7 @@ class BreedPage extends StatelessWidget {
       }
     } catch (e) {
       print('Error fetching dog image: $e');
-      return 'https://www.example.com/placeholder.jpg'; // Placeholder image in case of error
+      return 'https://www.example.com/placeholder.jpg'; //Place Holder
     }
   }
 }
@@ -328,28 +356,83 @@ class DogDetailPage extends StatelessWidget {
 
   String generateRandomContact() {
     final randomPhoneNumbers = [
-      '+1 555-1234',
-      '+1 555-5678',
-      '+1 555-8765',
-      '+1 555-4321',
+      '+63 912 345 6789', '+63 923 456 7890', '+63 934 567 8901', '+63 945 678 9012',
+      '+63 956 789 0123', '+63 967 890 1234', '+63 978 901 2345', '+63 989 012 3456',
+      '+63 990 123 4567', '+63 901 234 5678'
     ];
     return randomPhoneNumbers[(dogName.length + breed.length) % randomPhoneNumbers.length];
   }
 
   String generateRandomEmail() {
     final randomEmails = [
-      'contact@dogadopt.com',
-      'info@dogadopt.com',
-      'help@dogadopt.com',
-      'support@dogadopt.com',
+      'buddy123@dogadopt.com', 'fido456@dogadopt.com', 'fluffy789@dogadopt.com',
+      'lassie321@dogadopt.com', 'lucky654@dogadopt.com', 'rex987@dogadopt.com',
+      'rover234@dogadopt.com', 'spot567@dogadopt.com', 'duke890@dogadopt.com',
+      'elizabeth112@dogadopt.com'
     ];
     return randomEmails[(dogName.length + breed.length) % randomEmails.length];
+  }
+  String generateRandomCharacteristics() {
+    final randomCharacteristics = [
+      'Loyal', 'Friendly', 'Playful', 'Energetic', 'Affectionate', 'Intelligent',
+      'Curious', 'Alert', 'Protective', 'Brave', 'Gentle', 'Obedient', 'Trainable',
+      'Adaptable', 'Cheerful', 'Social', 'Independent', 'Loving', 'Patient', 'Quiet',
+      'Active', 'Agile', 'Hardworking', 'Strong', 'Confident', 'Courageous', 'Easygoing',
+      'Sensitive', 'Reliable', 'Devoted', 'Fearless', 'Mischievous', 'Clumsy', 'Clever',
+      'Faithful', 'Dutiful', 'Watchful', 'Trusting', 'Comical', 'Shy', 'Excitable',
+      'Focused', 'Tolerant', 'Resourceful', 'Kind', 'Perceptive', 'Fun-loving',
+      'Determined', 'Vocal', 'Companionable', 'Outgoing'
+    ];
+    return randomCharacteristics[(dogName.length + breed.length) % randomCharacteristics.length];
+  }
+
+  String generateRandomCon() {
+    final randomCon = [
+      'Requires daily exercise', 'Needs regular grooming', 'Can be expensive to care for',
+      'May bark excessively', 'Can chew or destroy furniture', 'Needs training',
+      'Requires constant attention as a puppy', 'May shed a lot', 'Can be aggressive if not socialized',
+      'May have separation anxiety', 'Requires regular veterinary checkups',
+      'Can bring in dirt or mud', 'May chase small animals', 'Needs time and patience',
+      'Can develop health problems with age', 'Can be noisy', 'Might not get along with other pets',
+      'Needs a proper diet', 'Can be difficult to house-train', 'May jump on people',
+      'Requires vaccinations', 'Can be stubborn', 'Might not be allowed in rented housing',
+      'Can attract fleas or ticks', 'Needs a lot of space in some cases'
+    ];
+    return randomCon[(dogName.length + breed.length) % randomCon.length];
+  }
+
+  Future<void> _sendEmail(BuildContext context, String dogName, String breed) async {
+    final subject = Uri.encodeComponent('Interested in $dogName');
+    final body = Uri.encodeComponent('Hello, I am interested in adopting $dogName the $breed.');
+    final email = 'memorynexus.nev@gmail.com';
+
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: email,
+      query: 'subject=$subject&body=$body',
+    );
+
+    try {
+      print('Attempting to launch URL: $emailUri');
+      if (await canLaunchUrl(emailUri)) {
+        await launchUrl(emailUri);
+      } else {
+        throw 'Could not launch email client with URL: $emailUri';
+      }
+    } catch (e) {
+      print('Error launching email client: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to Send Email')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final contactNumber = generateRandomContact();
     final email = generateRandomEmail();
+    final characteristic = generateRandomCharacteristics();
+    final con = generateRandomCon();
 
     return Scaffold(
       appBar: AppBar(
@@ -379,10 +462,27 @@ class DogDetailPage extends StatelessWidget {
               'Email: $email',
               style: TextStyle(fontSize: 18),
             ),
+            SizedBox(height: 10),
+            Text(
+              'Characteristic: $characteristic',
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Con: $con',
+              style: TextStyle(fontSize: 18),
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Go back to the previous page
+                _sendEmail(context, dogName, breed);
+              },
+              child: Text('Contact for Adoption'),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
               },
               child: Text('Back'),
             ),
