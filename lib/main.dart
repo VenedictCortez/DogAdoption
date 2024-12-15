@@ -154,7 +154,7 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('Assets/040a0a1a7e8a124c9fbfc76914272c06.jpg'),  // Background image
+            image: AssetImage('Assets/040a0a1a7e8a124c9fbfc76914272c06.jpg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -246,7 +246,7 @@ class BreedPage extends StatelessWidget {
   List<Map<String, String>> getDogsForBreed(String breed) {
     return List.generate(8, (index) {
       return {
-        'name': getRandomName(), // Assign a random name
+        'name': getRandomName(),
         'image': 'https://dog.ceo/api/breed/$breed/images/random',
       };
     });
@@ -303,7 +303,6 @@ class BreedPage extends StatelessWidget {
                 final dogImageUrl = dog['image']!;
                 return GestureDetector(
                   onTap: () {
-                    // Navigate to DogDetailPage on tap
                     Navigator.push(
                       context,
                       MaterialPageRoute(
