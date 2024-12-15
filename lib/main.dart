@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
-import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(DogAdoptionApp());
@@ -211,7 +210,7 @@ class BreedPage extends StatelessWidget {
 
   BreedPage({required this.breed});
 
-  // List of potential dog names
+
   final List<String> dogNames = [
     'Buddy', 'Fido', 'Fluffy', 'Lassie', 'Lucky', 'Rex', 'Rover', 'Spot',
     'Duke', 'Elizabeth', 'King', 'Kate', 'Princess',
@@ -223,13 +222,11 @@ class BreedPage extends StatelessWidget {
     'Comet', 'Cosmo', 'Luna', 'Pluto', 'Star', 'Stella', 'Venus'
   ];
 
-  // Method to generate a random name from the list
   String getRandomName() {
     final random = Random();
     return dogNames[random.nextInt(dogNames.length)];
   }
 
-  // Dynamically generate dogs list with random names
   List<Map<String, String>> getDogsForBreed(String breed) {
     return List.generate(4, (index) {
       return {
@@ -241,7 +238,6 @@ class BreedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch dogs for the selected breed
     final List<Map<String, String>> dogs = getDogsForBreed(breed);
 
     return Scaffold(
@@ -337,13 +333,13 @@ class BreedPage extends StatelessWidget {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return data['message']; // Return the image URL
+        return data['message'];
       } else {
         throw Exception('Failed to load dog image');
       }
     } catch (e) {
       print('Error fetching dog image: $e');
-      return 'https://www.example.com/placeholder.jpg'; //Place Holder
+      return 'https://www.example.com/placeholder.jpg';
     }
   }
 }
@@ -401,94 +397,61 @@ class DogDetailPage extends StatelessWidget {
     return randomCon[(dogName.length + breed.length) % randomCon.length];
   }
 
-  Future<void> _sendEmail(BuildContext context, String dogName, String breed) async {
-    final subject = Uri.encodeComponent('Interested in $dogName');
-    final body = Uri.encodeComponent('Hello, I am interested in adopting $dogName the $breed.');
-    final email = 'memorynexus.nev@gmail.com';
+    @override
+    Widget build(BuildContext context) {
+      final contactNumber = generateRandomContact();
+      final email = generateRandomEmail();
+      final characteristic = generateRandomCharacteristics();
+      final con = generateRandomCon();
 
-    final Uri emailUri = Uri(
-      scheme: 'mailto',
-      path: email,
-      query: 'subject=$subject&body=$body',
-    );
-
-    try {
-      print('Attempting to launch URL: $emailUri');
-      if (await canLaunchUrl(emailUri)) {
-        await launchUrl(emailUri);
-      } else {
-        throw 'Could not launch email client with URL: $emailUri';
-      }
-    } catch (e) {
-      print('Error launching email client: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to Send Email')),
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('$dogName Details'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Name: $dogName',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Breed: $breed',
+                style: TextStyle(fontSize: 20),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Contact Number: $contactNumber',
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Email: $email',
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Characteristic: $characteristic',
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Con: $con',
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Back'),
+              ),
+            ],
+          ),
+        ),
       );
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final contactNumber = generateRandomContact();
-    final email = generateRandomEmail();
-    final characteristic = generateRandomCharacteristics();
-    final con = generateRandomCon();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('$dogName Details'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Name: $dogName',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Breed: $breed',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Contact Number: $contactNumber',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Email: $email',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Characteristic: $characteristic',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Con: $con',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _sendEmail(context, dogName, breed);
-              },
-              child: Text('Contact for Adoption'),
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('Back'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
