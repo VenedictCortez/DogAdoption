@@ -101,14 +101,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<String> breeds = [
-    'labrador',
-    'pomeranian',
-    'pug',
-    'bulldog',
-    'beagle',
-    'poodle',
-    'rottweiler',
-    'dachshund',
+    'affenpinscher', 'african', 'airedale', 'akita', 'appenzeller', 'australian',
+    'bakharwal', 'basenji', 'beagle', 'bluetick', 'borzoi', 'bouvier', 'boxer',
+    'brabancon', 'briard', 'buhund', 'bulldog', 'bullterrier', 'cattledog', 'cavapoo',
+    'chihuahua', 'chippiparai', 'chow', 'clumber', 'cockapoo', 'collie', 'coonhound',
+    'corgi', 'cotondetulear', 'dachshund', 'dalmatian', 'dane', 'danish', 'deerhound',
+    'dhole', 'dingo', 'doberman', 'elkhound', 'entlebucher', 'eskimo', 'finnish',
+    'frise', 'gaddi', 'germanshepherd', 'greyhound', 'groenendael', 'havanese', 'hound',
+    'husky', 'keeshond', 'kelpie', 'kombai', 'komondor', 'kuvasz', 'labradoodle', 'labrador',
+    'leonberg', 'lhasa', 'malamute', 'malinois', 'maltese', 'mastiff', 'mexicanhairless',
+    'mix', 'mountain', 'mudhol', 'newfoundland', 'otterhound', 'ovcharka', 'papillon',
+    'pariah', 'pekinese', 'pembroke', 'pinscher', 'pitbull', 'pointer', 'pomeranian',
+    'poodle', 'pug', 'puggle', 'pyrenees', 'rajapalayam', 'redbone', 'retriever',
+    'ridgeback', 'rottweiler', 'saluki', 'samoyed', 'schipperke', 'schnauzer', 'segugio',
+    'setter', 'sharpei', 'sheepdog', 'shiba', 'shihtzu', 'spaniel', 'spitz', 'springer',
+    'stbernard', 'terrier', 'tervuren', 'vizsla', 'waterdog', 'weimaraner', 'whippet', 'wolfhound'
   ];
 
   Map<String, String> breedImages = {};
@@ -141,70 +148,79 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Dog Breeds'),
+        backgroundColor: Colors.blue[900],
+        foregroundColor: Colors.white,
       ),
-      body: breedImages.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 3 / 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('Assets/040a0a1a7e8a124c9fbfc76914272c06.jpg'),  // Background image
+            fit: BoxFit.cover,
+          ),
         ),
-        padding: EdgeInsets.all(10),
-        itemCount: breeds.length,
-        itemBuilder: (context, index) {
-          final breed = breeds[index];
-          final imageUrl = breedImages[breed] ?? '';
+        child: breedImages.isEmpty
+            ? Center(child: CircularProgressIndicator())
+            : GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 3 / 2,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          padding: EdgeInsets.all(10),
+          itemCount: breeds.length,
+          itemBuilder: (context, index) {
+            final breed = breeds[index];
+            final imageUrl = breedImages[breed] ?? '';
 
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BreedPage(breed: breed),
-                ),
-              );
-            },
-            child: Card(
-              elevation: 4,
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (imageUrl.isNotEmpty)
-                    Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                    )
-                  else
-                    Center(child: CircularProgressIndicator()),
-                  Container(
-                    color: Colors.black54,
-                    alignment: Alignment.center,
-                    child: Text(
-                      breed[0].toUpperCase() + breed.substring(1),
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BreedPage(breed: breed),
                   ),
-                ],
+                );
+              },
+              child: Card(
+                elevation: 4,
+                clipBehavior: Clip.antiAlias,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (imageUrl.isNotEmpty)
+                      Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                      )
+                    else
+                      Center(child: CircularProgressIndicator()),
+                    Container(
+                      color: Colors.black54,
+                      alignment: Alignment.center,
+                      child: Text(
+                        breed[0].toUpperCase() + breed.substring(1),
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 }
-
 class BreedPage extends StatelessWidget {
   final String breed;
 
@@ -228,7 +244,7 @@ class BreedPage extends StatelessWidget {
   }
 
   List<Map<String, String>> getDogsForBreed(String breed) {
-    return List.generate(4, (index) {
+    return List.generate(8, (index) {
       return {
         'name': getRandomName(), // Assign a random name
         'image': 'https://dog.ceo/api/breed/$breed/images/random',
@@ -242,16 +258,34 @@ class BreedPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(breed.toUpperCase(),
-        ),
+        title: Text(breed.toUpperCase()),
+        backgroundColor: Colors.blue[900],
+        foregroundColor: Colors.white,
       ),
-      body: Column(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(image: AssetImage('Assets/040a0a1a7e8a124c9fbfc76914272c06.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Available $breed for adoption:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.blue[900],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Available $breed for adoption:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
           Expanded(
@@ -290,8 +324,7 @@ class BreedPage extends StatelessWidget {
                         FutureBuilder<String>(
                           future: _fetchDogImage(dogImageUrl),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
                               return Center(child: CircularProgressIndicator());
                             }
                             if (snapshot.hasError) {
@@ -325,7 +358,7 @@ class BreedPage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 
   Future<String> _fetchDogImage(String url) async {
@@ -406,8 +439,10 @@ class DogDetailPage extends StatelessWidget {
 
       return Scaffold(
         appBar: AppBar(
-          title: Text('$dogName Details'),
-        ),
+          title: Text(breed.toUpperCase()),
+      backgroundColor: Colors.blue[900],
+      foregroundColor: Colors.white,
+      ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
